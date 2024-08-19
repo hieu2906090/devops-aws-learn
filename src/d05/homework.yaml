@@ -1,0 +1,78 @@
+# AWSTemplateFormatVersion: 2022-09-08
+
+Description: My Lab
+
+# Metadata:
+
+Parameters:
+  InputAmiId:
+    Default: "ami-02ee763250491e04a"
+    Type: AWS::EC2::Image::Id
+    Description: "AMI Id"
+    AllowedValues:
+      - "ami-02ee763250491e04a"
+      - "ami-02ee763250491e04a"
+
+  KeyPair:
+    Default: "d02-homework"
+    Type: String
+
+  InstanceType:
+    Type: String
+    Default: "t2.micro"
+
+# Mappings:
+
+# Conditions:
+
+Resources:
+  ###############################################################
+  # -------------------------------------------------------------
+  MyCustomVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: stack
+          Value: production
+
+  # -------------------------------------------------------------
+  MySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: MyCustomVPC
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: "us-east-1a"
+      Tags:
+        - Key: stack
+          Value: production
+
+  ###############################################################
+  # -------------------------------------------------------------
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref InputAmiId
+      KeyName: !Ref KeyPair
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref MySecurityGroup
+
+  # -------------------------------------------------------------
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http to client host
+      # VpcId: vpc-07ca8edbf37fc699a
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  publicIp:
+    Value: !GetAtt MyEC2Instance.PublicIp

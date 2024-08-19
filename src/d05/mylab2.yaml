@@ -1,0 +1,23 @@
+# AWSTemplateFormatVersion: 2022-09-08
+
+Description: My Lab
+
+# Metadata: 
+
+# Parameters:
+
+# Mappings: 
+
+# Conditions: 
+
+Resources: 
+  mylab1:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cf-templates-1m6ajv87tp29x-ap-southeast-1.s3.ap-southeast-1.amazonaws.com/mylab1.yaml
+      Parameters:
+        InputAmiId: ami-02ee763250491e04a
+        KeyPair: d02-homework
+        InstanceType: "t2.micro"
+
+# Outputs:
